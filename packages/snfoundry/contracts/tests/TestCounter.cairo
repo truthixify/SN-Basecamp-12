@@ -16,17 +16,11 @@ const ZERO_COUNT: u32 = 0;
 
 // Test account -> Owner
 fn OWNER() -> ContractAddress {
-    // get the owner address
-    // let caller = get_caller_address();
-    // return caller;
     'OWNER'.try_into().unwrap()
 }
 
 // Test account -> User
 fn USER() -> ContractAddress {
-    // get the owner address
-    // let caller = get_caller_address();
-    // return caller;
     'USER'.try_into().unwrap()
 }
 
@@ -98,7 +92,7 @@ fn test_increase_emitted_events() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increase { account: USER() }),
+                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -108,7 +102,7 @@ fn test_increase_emitted_events() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Decreased(Counter::Decrease { account: USER() }),
+                    Counter::Event::Decreased(Counter::Decreased { account: USER() }),
                 ),
             ],
         );
@@ -133,7 +127,7 @@ fn test_increase_emitted_events_and_state_changes() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increase { account: USER() }),
+                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -143,7 +137,7 @@ fn test_increase_emitted_events_and_state_changes() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Decreased(Counter::Decrease { account: USER() }),
+                    Counter::Event::Decreased(Counter::Decreased { account: USER() }),
                 ),
             ],
         );
@@ -211,7 +205,7 @@ fn test_decrease_emitted_events() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Decreased(Counter::Decrease { account: USER() }),
+                    Counter::Event::Decreased(Counter::Decreased { account: USER() }),
                 ),
             ],
         );
@@ -221,7 +215,7 @@ fn test_decrease_emitted_events() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increase { account: USER() }),
+                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -246,7 +240,7 @@ fn test_decrease_emitted_events_and_state_changes() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Decreased(Counter::Decrease { account: USER() }),
+                    Counter::Event::Decreased(Counter::Decreased { account: USER() }),
                 ),
             ],
         );
@@ -256,7 +250,7 @@ fn test_decrease_emitted_events_and_state_changes() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increase { account: USER() }),
+                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -267,6 +261,7 @@ fn test_decrease_emitted_events_and_state_changes() {
 }
 
 #[test]
+#[fork("SEPOLIA_LATEST")] 
 #[feature("safe_dispatcher")]
 fn test_safe_panic_counter_reset_by_non_owner() {
     // deploy the contract
@@ -282,6 +277,7 @@ fn test_safe_panic_counter_reset_by_non_owner() {
 }
 
 #[test]
+#[fork("SEPOLIA_LATEST")] 
 #[should_panic(expected: 'Caller is not the owner')]
 fn test_panic_counter_reset_by_non_owner() {
     // deploy the contract
@@ -294,6 +290,7 @@ fn test_panic_counter_reset_by_non_owner() {
 }
 
 #[test]
+#[fork("SEPOLIA_LATEST")] 
 fn test_counter_reset_state_changes() {
     // deploy the contract
     let (counter, _, _) = __depoly__(1);
@@ -311,6 +308,7 @@ fn test_counter_reset_state_changes() {
 }
 
 #[test]
+#[fork("SEPOLIA_LATEST")] 
 fn test_reset_emitted_events() {
     // deploy the contract
     let (counter, _, _) = __depoly__(1);
@@ -335,6 +333,7 @@ fn test_reset_emitted_events() {
 }
 
 #[test]
+#[fork("SEPOLIA_LATEST")] 
 fn test_reset_emitted_events_and_state_changes() {
     // deploy the contract
     let (counter, _, _) = __depoly__(1);
@@ -364,6 +363,7 @@ fn test_reset_emitted_events_and_state_changes() {
 }
 
 #[test]
+#[fork("SEPOLIA_LATEST")] 
 fn test_multiple_functions() {
     // deploy the contract
     let (counter, _, _) = __depoly__(10);
@@ -385,7 +385,7 @@ fn test_multiple_functions() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increase { account: USER() }),
+                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -398,7 +398,7 @@ fn test_multiple_functions() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Decreased(Counter::Decrease { account: USER() }),
+                    Counter::Event::Decreased(Counter::Decreased { account: USER() }),
                 ),
             ],
         );
@@ -420,4 +420,32 @@ fn test_multiple_functions() {
                 ),
             ],
         );
+}
+
+#[test]
+#[fork("SEPOLIA_LATEST")]
+fn test_counter_win() {
+    // deploy the contract
+    let (counter, _, _) = __depoly__(9);
+    let count_1 = counter.get_counter();
+
+    assert(count_1 == 9, 'Counter not set to 1');
+    let mut spy = spy_events();
+
+    // mock a caller
+    start_cheat_caller_address(counter.contract_address, OWNER());
+    counter.increase_counter();
+    stop_cheat_caller_address(counter.contract_address);
+
+    spy
+        .assert_emitted(
+            @array![
+                (
+                    counter.contract_address,
+                    Counter::Event::Increaesed(Counter::Increased { account: OWNER() }),
+                ),
+            ],
+        );
+
+    assert(counter.get_counter() == Counter::WIN_NUMBER, 'Counter not increased');
 }

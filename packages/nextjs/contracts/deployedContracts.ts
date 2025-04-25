@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     Counter: {
       address:
-        "0x7b721e01cda71ada38024e26273dcd7ed81b50484fb8f9a454f0d76fc05f60e",
+        "0x4c12641bacd1ccf054fbd555333223d3feba17218bf5d8e29ed59a4eecfee12",
       abi: [
         {
           type: "impl",
@@ -49,6 +49,17 @@ const deployedContracts = {
               inputs: [],
               outputs: [],
               state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_win_number",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u32",
+                },
+              ],
+              state_mutability: "view",
             },
           ],
         },
@@ -128,7 +139,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::counter::Counter::Increase",
+          name: "contracts::counter::Counter::Increased",
           kind: "struct",
           members: [
             {
@@ -140,7 +151,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::counter::Counter::Decrease",
+          name: "contracts::counter::Counter::Decreased",
           kind: "struct",
           members: [
             {
@@ -220,12 +231,12 @@ const deployedContracts = {
           variants: [
             {
               name: "Increaesed",
-              type: "contracts::counter::Counter::Increase",
+              type: "contracts::counter::Counter::Increased",
               kind: "nested",
             },
             {
               name: "Decreased",
-              type: "contracts::counter::Counter::Decrease",
+              type: "contracts::counter::Counter::Decreased",
               kind: "nested",
             },
             {
@@ -242,7 +253,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x65aea3c8d15cb6cf7f67d754ffe3f10fe1a278999ae2ec418f173f759532509",
+        "0x535cede477002e9236b645bf811e7e997b3a0aaaa42fe237a14da640663ca8f",
     },
   },
 } as const;
