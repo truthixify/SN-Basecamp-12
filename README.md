@@ -178,15 +178,16 @@ To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, 
 
 ```json
 {
- "jsonrpc":"2.0",
- "method":"starknet_specVersion",
- "id":1
+  "jsonrpc": "2.0",
+  "method": "starknet_specVersion",
+  "id": 1
 }
 ```
 
 You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
 
 ![rpc-version](./packages/nextjs/public/rpc-version.png)
+
 </details>
 
 ## Network Configuration Centralization
@@ -223,23 +224,23 @@ To ensure the proper functioning of Scaffold-Stark with Testnet or Mainnet, your
 
 Depending on your package manager, substitute the work COMMAND with the appropiate one from the list.
 
-   $ yarn COMMAND
-   $ npm run COMMAND
+$ yarn COMMAND
+$ npm run COMMAND
 
 Commands:
 
-| Command     | Description |
-| --- | --- |
+| Command          | Description                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------- |
 | format:check     | (Read only) Batch checks for format inconsistencies for the nextjs and snfoundry codebase |
-| next:check-types | Compile  typscript project                                                                |
+| next:check-types | Compile typscript project                                                                 |
 | next:lint        | Runs next lint                                                                            |
 | prepare          | Install husky's git hooks                                                                 |
 | usage            | Show this text                                                                            |
 
 ### CLI Smart Contracts
 
-| Command     | Description |
-| --- | --- |
+| Command         | Description                                                                         |
+| --------------- | ----------------------------------------------------------------------------------- |
 | compile         | Compiles contracts.                                                                 |
 | test            | Runs snfoundry tests                                                                |
 | chain           | Starts the local blockchain network.                                                |
@@ -249,13 +250,12 @@ Commands:
 
 ### CLI Frontend
 
-| Command     | Description |
-| --- | --- |
+| Command     | Description                                  |
+| ----------- | -------------------------------------------- |
 | start       | Starts the frontend server                   |
 | test:nextjs | Runs the nextjs tests                        |
 | vercel      | Deploys app to vercel                        |
 | vercel:yolo | Force deploy app to vercel (ignoring errors) |
-
 
 ## **What's next**
 

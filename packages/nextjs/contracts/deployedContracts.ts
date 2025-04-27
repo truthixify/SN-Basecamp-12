@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     Counter: {
       address:
-        "0x4c12641bacd1ccf054fbd555333223d3feba17218bf5d8e29ed59a4eecfee12",
+        "0x7514d70b690b17e8745c71e495ec220542d8c42f97efe3046cd5487620bed18",
       abi: [
         {
           type: "impl",
@@ -230,7 +230,7 @@ const deployedContracts = {
           kind: "enum",
           variants: [
             {
-              name: "Increaesed",
+              name: "Increased",
               type: "contracts::counter::Counter::Increased",
               kind: "nested",
             },
@@ -253,7 +253,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x535cede477002e9236b645bf811e7e997b3a0aaaa42fe237a14da640663ca8f",
+        "0x52c64b760766656d44929739bf84e758748b83a9cf26cb93eb708e7e05fb750",
     },
   },
 } as const;

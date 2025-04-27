@@ -20,7 +20,6 @@ pub mod Counter {
 
     #[abi(embed_v0)]
     impl OwnableMixinImpl = OwnableComponent::OwnableMixinImpl<ContractState>;
-
     impl OwnableTwoStepImpl = OwnableComponent::OwnableTwoStepImpl<ContractState>;
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
 
@@ -48,7 +47,7 @@ pub mod Counter {
     #[event]
     #[derive(Drop, starknet::Event)]
     pub enum Event {
-        Increaesed: Increased,
+        Increased: Increased,
         Decreased: Decreased,
         Reset: Reset,
         #[flat]
@@ -72,8 +71,6 @@ pub mod Counter {
 
     pub mod Error {
         pub const EMPTY_COUNTER: felt252 = 'Decreasing Empty Counter';
-        pub const UNDERFLOW: felt252 = 'Decreasing Counter Underflow';
-        pub const OVERFLOW: felt252 = 'Increasing Counter Overflow';
     }
 
     #[abi(embed_v0)]

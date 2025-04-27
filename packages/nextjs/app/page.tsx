@@ -3,11 +3,8 @@
 import { ConnectedAddress } from "~~/components/ConnectedAddress";
 import { useState } from "react";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
-// import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
-// import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import { useBlockNumber } from "@starknet-react/core";
-// import { useDeployedContractInfo } from "~~/hooks/scaffold-stark/useDeployedContractInfo";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { inc } from "nprogress";
@@ -22,7 +19,7 @@ const Home = () => {
   const { targetNetwork } = useTargetNetwork();
   const { data: counterValue } = useScaffoldReadContract({
     contractName: "Counter",
-    functionName: "get_counter",    
+    functionName: "get_counter",
   });
 
   const { data: contractBalance } = useScaffoldReadContract({
@@ -31,49 +28,56 @@ const Home = () => {
     args: [counter?.address],
   });
 
-  const formattedBalance = contractBalance ? (Number(contractBalance) / 1e18).toFixed(6) : "0.000000";
+  const formattedBalance = contractBalance
+    ? (Number(contractBalance) / 1e18).toFixed(6)
+    : "0.000000";
 
-  const {data: winNumber} = useScaffoldReadContract({
+  const { data: winNumber } = useScaffoldReadContract({
     contractName: "Counter",
     functionName: "get_win_number",
   });
 
-  const {data: blockNumber} = useBlockNumber()
+  const { data: blockNumber } = useBlockNumber();
 
-  const {data: events} = useScaffoldEventHistory({
+  const { data: events } = useScaffoldEventHistory({
     contractName: "Counter",
     eventName: "contracts::counter::Counter::Increased",
-    fromBlock: blockNumber ? (blockNumber > 50n ? BigInt(blockNumber - 50) : 0n) : 0n,
+    fromBlock: blockNumber
+      ? blockNumber > 50n
+        ? BigInt(blockNumber - 50)
+        : 0n
+      : 0n,
     watch: true,
-  })
+  });
 
-  const {sendAsync: incrementCounter} = useScaffoldWriteContract({
+  const { sendAsync: incrementCounter } = useScaffoldWriteContract({
     contractName: "Counter",
     functionName: "increase_counter",
-  })
+  });
 
-  const {sendAsync: incrementWithStrkDeposit} = useScaffoldMultiWriteContract({
-    calls: [
+  const { sendAsync: incrementWithStrkDeposit } = useScaffoldMultiWriteContract(
+    {
+      calls: [
         {
-            contractName: "Strk",
-            functionName: "transfer",
-            args: [counter?.address, BigInt(Number(inputAmount) * 10 ** 18)],
-        }, 
+          contractName: "Strk",
+          functionName: "transfer",
+          args: [counter?.address, BigInt(Number(inputAmount) * 10 ** 18)],
+        },
         {
-            contractName: "Counter",
-            functionName: "increase_counter",
-        }
-    ]
-  })
+          contractName: "Counter",
+          functionName: "increase_counter",
+        },
+      ],
+    },
+  );
 
   const handleIncrement = () => {
     if (inputAmount && parseFloat(inputAmount) > 0) {
       incrementWithStrkDeposit();
     }
+    incrementCounter();
+  };
 
-    incrementCounter()
-  }
-  
   return (
     <div className="flex items-center flex-col flex-grow pt-10">
       <div className="px-5 w-full max-w-6xl">
@@ -83,7 +87,7 @@ const Home = () => {
           </span>
           <div className="flex justify-center">
             <span className="text-base mt-2 badge badge-primary">
-              { targetNetwork.name }
+              {targetNetwork.name}
             </span>
           </div>
         </h1>
@@ -97,15 +101,17 @@ const Home = () => {
               <h3 className="text-lg font-semibold mb-2">Current Count</h3>
               <p className="text-5xl font-bold text-center my-4">
                 {counterValue?.toString() ?? "0"}
-                <span className="text-xl opacity-60 ml-2">/ {winNumber?.toString()}</span>
+                <span className="text-xl opacity-60 ml-2">
+                  / {winNumber?.toString()}
+                </span>
               </p>
-              
+
               <div className="bg-base-300 p-4 rounded-lg my-4">
                 <p className="text-xl font-medium text-center">
                   Prize Pool: {formattedBalance} STRK
                 </p>
               </div>
-              
+
               <div className="form-control mb-4">
                 <label className="label">
                   <span className="label-text text-lg font-medium">
@@ -124,7 +130,7 @@ const Home = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex justify-center gap-4 mt-4">
                 <button
                   className="btn btn-primary btn-lg"
@@ -143,7 +149,7 @@ const Home = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-base-100 p-8 rounded-3xl border border-gradient shadow-lg">
             <h2 className="text-2xl font-bold mb-6 text-secondary">
               Activity History
@@ -153,12 +159,18 @@ const Home = () => {
                 events.map((event, index) => (
                   <div key={index} className="bg-base-200 p-4 rounded-xl">
                     <p className="text-lg">
-                      <span className="font-medium">{ event.parsedArgs.account.substring(0, 6) }</span>
+                      <span className="font-medium">
+                        {event.parsedArgs.account.substring(0, 6)}...
+                        {event.parsedArgs.account.slice(-4)} incremented the
+                        counter
+                      </span>
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-center text-lg opacity-70">No activity yet</p>
+                <p className="text-center text-lg opacity-70">
+                  No activity yet
+                </p>
               )}
             </div>
           </div>

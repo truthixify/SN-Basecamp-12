@@ -92,7 +92,7 @@ fn test_increase_emitted_events() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
+                    Counter::Event::Increased(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -127,7 +127,7 @@ fn test_increase_emitted_events_and_state_changes() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
+                    Counter::Event::Increased(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -215,7 +215,7 @@ fn test_decrease_emitted_events() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
+                    Counter::Event::Increased(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -250,7 +250,7 @@ fn test_decrease_emitted_events_and_state_changes() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
+                    Counter::Event::Increased(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -261,7 +261,7 @@ fn test_decrease_emitted_events_and_state_changes() {
 }
 
 #[test]
-#[fork("SEPOLIA_LATEST")] 
+#[fork("SEPOLIA_LATEST")]
 #[feature("safe_dispatcher")]
 fn test_safe_panic_counter_reset_by_non_owner() {
     // deploy the contract
@@ -277,7 +277,7 @@ fn test_safe_panic_counter_reset_by_non_owner() {
 }
 
 #[test]
-#[fork("SEPOLIA_LATEST")] 
+#[fork("SEPOLIA_LATEST")]
 #[should_panic(expected: 'Caller is not the owner')]
 fn test_panic_counter_reset_by_non_owner() {
     // deploy the contract
@@ -290,7 +290,7 @@ fn test_panic_counter_reset_by_non_owner() {
 }
 
 #[test]
-#[fork("SEPOLIA_LATEST")] 
+#[fork("SEPOLIA_LATEST")]
 fn test_counter_reset_state_changes() {
     // deploy the contract
     let (counter, _, _) = __depoly__(1);
@@ -308,7 +308,7 @@ fn test_counter_reset_state_changes() {
 }
 
 #[test]
-#[fork("SEPOLIA_LATEST")] 
+#[fork("SEPOLIA_LATEST")]
 fn test_reset_emitted_events() {
     // deploy the contract
     let (counter, _, _) = __depoly__(1);
@@ -333,7 +333,7 @@ fn test_reset_emitted_events() {
 }
 
 #[test]
-#[fork("SEPOLIA_LATEST")] 
+#[fork("SEPOLIA_LATEST")]
 fn test_reset_emitted_events_and_state_changes() {
     // deploy the contract
     let (counter, _, _) = __depoly__(1);
@@ -363,7 +363,7 @@ fn test_reset_emitted_events_and_state_changes() {
 }
 
 #[test]
-#[fork("SEPOLIA_LATEST")] 
+#[fork("SEPOLIA_LATEST")]
 fn test_multiple_functions() {
     // deploy the contract
     let (counter, _, _) = __depoly__(10);
@@ -385,7 +385,7 @@ fn test_multiple_functions() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increased { account: USER() }),
+                    Counter::Event::Increased(Counter::Increased { account: USER() }),
                 ),
             ],
         );
@@ -442,7 +442,7 @@ fn test_counter_win() {
             @array![
                 (
                     counter.contract_address,
-                    Counter::Event::Increaesed(Counter::Increased { account: OWNER() }),
+                    Counter::Event::Increased(Counter::Increased { account: OWNER() }),
                 ),
             ],
         );
