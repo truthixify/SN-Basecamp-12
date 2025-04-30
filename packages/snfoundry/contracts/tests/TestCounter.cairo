@@ -7,7 +7,8 @@ use openzeppelin_access::ownable::interface::{IOwnableDispatcher, IOwnableDispat
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use snforge_std::EventSpyAssertionsTrait;
 use snforge_std::{
-    ContractClassTrait, DeclareResultTrait, declare, spy_events, start_cheat_caller_address, stop_cheat_caller_address
+    ContractClassTrait, DeclareResultTrait, declare, spy_events, start_cheat_caller_address,
+    stop_cheat_caller_address,
 };
 use starknet::{ContractAddress};
 
@@ -331,14 +332,14 @@ fn test_reset_balance_changes() {
     // mock user as counter caller
     start_cheat_caller_address(counter.contract_address, USER());
     start_cheat_caller_address(strk_contract_address, counter.contract_address);
-    
-    counter.reset_counter();
 
+    counter.reset_counter();
 
     let contract_balance_after = strk_dispatcher.balance_of(counter.contract_address);
     let caller_balance_after = strk_dispatcher.balance_of(USER());
 
-    // contract current balance is 2 * contract previous balance and assert caller sent the STRK token
+    // contract current balance is 2 * contract previous balance and assert caller sent the STRK
+    // token
     assert(contract_balance_after == 2 * contract_balance_before, 'Contract balance not correct');
     assert(
         caller_balance_after == caller_balance_before - contract_balance_before,
@@ -407,13 +408,14 @@ fn test_reset_emitted_events_and_state_and_balance_changes() {
     // mock user as counter caller
     start_cheat_caller_address(counter.contract_address, USER());
     start_cheat_caller_address(strk_contract_address, counter.contract_address);
-    
+
     counter.reset_counter();
 
     let contract_balance_after = strk_dispatcher.balance_of(counter.contract_address);
     let caller_balance_after = strk_dispatcher.balance_of(USER());
 
-    // contract current balance is 2 * contract previous balance and assert caller sent the STRK token
+    // contract current balance is 2 * contract previous balance and assert caller sent the STRK
+    // token
     assert(contract_balance_after == 2 * contract_balance_before, 'Contract balance not 0');
     assert(
         caller_balance_after == caller_balance_before - contract_balance_before,

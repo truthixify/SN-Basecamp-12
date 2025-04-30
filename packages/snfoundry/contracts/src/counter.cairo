@@ -130,8 +130,7 @@ pub mod Counter {
 
                 assert!(allowance >= contract_balance, "Allowance and balance do not match");
 
-                strk_dispatcher
-                    .transfer_from(caller, get_contract_address(), contract_balance);
+                strk_dispatcher.transfer_from(caller, get_contract_address(), contract_balance);
             }
 
             self.counter.write(0);
