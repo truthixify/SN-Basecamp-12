@@ -126,10 +126,6 @@ pub mod Counter {
             let contract_balance = strk_dispatcher.balance_of(get_contract_address());
 
             if contract_balance > 0 {
-                let allowance = strk_dispatcher.allowance(caller, get_contract_address());
-
-                assert!(allowance >= contract_balance, "Allowance and balance do not match");
-
                 strk_dispatcher.transfer_from(caller, get_contract_address(), contract_balance);
             }
 

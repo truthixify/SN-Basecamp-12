@@ -1,7 +1,7 @@
 "use client";
 
 import { ConnectedAddress } from "~~/components/ConnectedAddress";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 import { useBlockNumber } from "@starknet-react/core";
@@ -12,8 +12,68 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWri
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 
 const Home = () => {
+  const { data: blockNumber } = useBlockNumber();
+
+  const { data: increaseEvents } = useScaffoldEventHistory({
+    contractName: "Counter",
+    eventName: "contracts::counter::Counter::Increased",
+    fromBlock: blockNumber
+      ? blockNumber > 50n
+        ? BigInt(blockNumber - 50)
+        : 0n
+      : 0n,
+    watch: true,
+  });
+
+  const { data: resetEvents } = useScaffoldEventHistory({
+    contractName: "Counter",
+    eventName: "contracts::counter::Counter::Reset",
+    fromBlock: blockNumber
+      ? blockNumber > 50n
+        ? BigInt(blockNumber - 50)
+        : 0n
+      : 0n,
+    watch: true,
+  });
+
   const [inputAmount, setInputAmount] = useState<string>("");
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<
+    { account: string; name: string; hash: string; timestamp: number }[]
+  >([]);
+  console.log("increaseEvents", increaseEvents);
+
+  useEffect(() => {
+    const eventsR = resetEvents.map((event) => ({
+      account: event.parsedArgs.account,
+      name: "Reset counter",
+      hash: event.log.block_hash,
+      timestamp: event.block.timestamp,
+    }));
+
+    const eventsI = increaseEvents.map((event) => ({
+      account: event.parsedArgs.account,
+      name: "Increased counter",
+      hash: event.block.block_hash,
+      timestamp: event.block.timestamp,
+    }));
+
+    setEvents((prevEvents) => {
+      const arr = [...prevEvents, ...eventsI, ...eventsR];
+      const seen = new Set();
+      const unique = arr.filter((item) => {
+        const key = item.hash;
+
+        if (seen.has(key)) return false;
+        seen.add(key);
+
+        return true;
+      });
+
+      unique.sort((a, b) => b.timestamp - a.timestamp);
+
+      return unique;
+    });
+  }, [increaseEvents, resetEvents]);
 
   const { data: counter } = useDeployedContractInfo("Counter");
 
@@ -38,19 +98,6 @@ const Home = () => {
     functionName: "get_win_number",
   });
 
-  const { data: blockNumber } = useBlockNumber();
-
-  const { data: increaseEvents } = useScaffoldEventHistory({
-    contractName: "Counter",
-    eventName: "contracts::counter::Counter::Increased",
-    fromBlock: blockNumber
-      ? blockNumber > 50n
-        ? BigInt(blockNumber - 50)
-        : 0n
-      : 0n,
-    watch: true,
-  });
-
   const { sendAsync: incrementCounter } = useScaffoldWriteContract({
     contractName: "Counter",
     functionName: "increase_counter",
@@ -73,9 +120,18 @@ const Home = () => {
   );
 
   const { sendAsync: resetCounterWithStrkWithdrawal } =
-    useScaffoldWriteContract({
-      contractName: "Counter",
-      functionName: "reset_counter",
+    useScaffoldMultiWriteContract({
+      calls: [
+        {
+          contractName: "Strk",
+          functionName: "approve",
+          args: [counter?.address, BigInt(Number(formattedBalance) * 10 ** 18)],
+        },
+        {
+          contractName: "Counter",
+          functionName: "reset_counter",
+        },
+      ],
     });
 
   const handleIncrement = () => {
@@ -166,14 +222,13 @@ const Home = () => {
               Activity History
             </h2>
             <div className="space-y-4">
-              {increaseEvents && increaseEvents.length > 0 ? (
-                increaseEvents.map((event, index) => (
+              {events && events.length > 0 ? (
+                events.map((event, index) => (
                   <div key={index} className="bg-base-200 p-4 rounded-xl">
                     <p className="text-lg">
                       <span className="font-medium">
-                        {event.parsedArgs.account.substring(0, 6)}...
-                        {event.parsedArgs.account.slice(-4)} incremented the
-                        counter
+                        {event.account.substring(0, 6)}...
+                        {event.account.slice(-4)} {event.name}
                       </span>
                     </p>
                   </div>
