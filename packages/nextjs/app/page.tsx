@@ -13,6 +13,7 @@ import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEven
 
 const Home = () => {
   const [inputAmount, setInputAmount] = useState<string>("");
+  const [events, setEvents] = useState<any[]>([]);
 
   const { data: counter } = useDeployedContractInfo("Counter");
 
@@ -39,7 +40,7 @@ const Home = () => {
 
   const { data: blockNumber } = useBlockNumber();
 
-  const { data: events } = useScaffoldEventHistory({
+  const { data: increaseEvents } = useScaffoldEventHistory({
     contractName: "Counter",
     eventName: "contracts::counter::Counter::Increased",
     fromBlock: blockNumber
@@ -71,11 +72,21 @@ const Home = () => {
     },
   );
 
+  const { sendAsync: resetCounterWithStrkWithdrawal } =
+    useScaffoldWriteContract({
+      contractName: "Counter",
+      functionName: "reset_counter",
+    });
+
   const handleIncrement = () => {
     if (inputAmount && parseFloat(inputAmount) > 0) {
       incrementWithStrkDeposit();
     }
     incrementCounter();
+  };
+
+  const handleReset = () => {
+    resetCounterWithStrkWithdrawal();
   };
 
   return (
@@ -142,7 +153,7 @@ const Home = () => {
                 </button>
                 <button
                   className="btn btn-outline btn-lg"
-                  onClick={() => console.log("Reset clicked")}
+                  onClick={handleReset}
                 >
                   Reset (costs {formattedBalance} STRK)
                 </button>
@@ -155,8 +166,8 @@ const Home = () => {
               Activity History
             </h2>
             <div className="space-y-4">
-              {events && events.length > 0 ? (
-                events.map((event, index) => (
+              {increaseEvents && increaseEvents.length > 0 ? (
+                increaseEvents.map((event, index) => (
                   <div key={index} className="bg-base-200 p-4 rounded-xl">
                     <p className="text-lg">
                       <span className="font-medium">

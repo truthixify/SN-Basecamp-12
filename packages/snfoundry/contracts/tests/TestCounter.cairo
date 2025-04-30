@@ -4,6 +4,7 @@ use contracts::counter::{
     ICounterSafeDispatcherTrait,
 };
 use openzeppelin_access::ownable::interface::{IOwnableDispatcher, IOwnableDispatcherTrait};
+use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use snforge_std::EventSpyAssertionsTrait;
 use snforge_std::{
     ContractClassTrait, DeclareResultTrait, declare, spy_events, start_cheat_caller_address,
@@ -23,6 +24,9 @@ fn OWNER() -> ContractAddress {
 fn USER() -> ContractAddress {
     'USER'.try_into().unwrap()
 }
+
+// Amount of STRK to transfer
+const STRK_AMOUNT: u256 = 1000;
 
 // util deploy functions
 fn __depoly__(init_value: u32) -> (ICounterDispatcher, IOwnableDispatcher, ICounterSafeDispatcher) {
@@ -262,35 +266,6 @@ fn test_decrease_emitted_events_and_state_changes() {
 
 #[test]
 #[fork("SEPOLIA_LATEST")]
-#[feature("safe_dispatcher")]
-fn test_safe_panic_counter_reset_by_non_owner() {
-    // deploy the contract
-    let (counter, _, safe_dispatcher) = __depoly__(1);
-
-    // mock a caller
-    start_cheat_caller_address(counter.contract_address, USER());
-
-    match safe_dispatcher.reset_counter() {
-        Result::Ok(_) => panic!("Cannot reset"),
-        Result::Err(e) => assert(*e[0] == 'Caller is not the owner', *e.at(0)),
-    }
-}
-
-#[test]
-#[fork("SEPOLIA_LATEST")]
-#[should_panic(expected: 'Caller is not the owner')]
-fn test_panic_counter_reset_by_non_owner() {
-    // deploy the contract
-    let (counter, _, _) = __depoly__(1);
-
-    // mock a caller
-    start_cheat_caller_address(counter.contract_address, USER());
-    // reset the counter
-    counter.reset_counter();
-}
-
-#[test]
-#[fork("SEPOLIA_LATEST")]
 fn test_counter_reset_state_changes() {
     // deploy the contract
     let (counter, _, _) = __depoly__(1);
@@ -341,10 +316,26 @@ fn test_reset_emitted_events_and_state_changes() {
 
     assert(count_1 == 1, 'Counter not set to 1');
     let mut spy = spy_events();
+    let strk_contract_address: ContractAddress = Counter::FELT_STRK_CONTRACT.try_into().unwrap();
+    let strk_dispatcher = IERC20Dispatcher { contract_address: strk_contract_address };
+    let contract_balance_before = strk_dispatcher.balance_of(counter.contract_address);
+    let caller_balance_before = strk_dispatcher.balance_of(OWNER());
 
     // mock a caller
     start_cheat_caller_address(counter.contract_address, OWNER());
     counter.reset_counter();
+
+    let contract_balance_after = strk_dispatcher.balance_of(counter.contract_address);
+    let caller_balance_after = strk_dispatcher.balance_of(OWNER());
+
+    // contract current balance is 2 * contract previous balance and assert caller sent the STRK
+    // token
+    assert(contract_balance_after == 2 * contract_balance_before, 'Contract balance not 0');
+    assert(
+        caller_balance_after == caller_balance_before - contract_balance_before,
+        'Caller balance not increased',
+    );
+
     stop_cheat_caller_address(counter.contract_address);
 
     spy
@@ -430,11 +421,30 @@ fn test_counter_win() {
     let count_1 = counter.get_counter();
 
     assert(count_1 == 9, 'Counter not set to 1');
+
     let mut spy = spy_events();
+    let strk_contract_address: ContractAddress = Counter::FELT_STRK_CONTRACT.try_into().unwrap();
+    let strk_dispatcher = IERC20Dispatcher { contract_address: strk_contract_address };
+    let contract_balance_before = strk_dispatcher.balance_of(counter.contract_address);
+    let caller_balance_before = strk_dispatcher.balance_of(OWNER());
 
     // mock a caller
     start_cheat_caller_address(counter.contract_address, OWNER());
     counter.increase_counter();
+
+    // assert counter.get_counter() == Counter::WIN_NUMBER, 'Counter not increased to win number');
+    assert!(counter.get_counter() == Counter::WIN_NUMBER, "Counter not increased to win number");
+
+    let contract_balance_after = strk_dispatcher.balance_of(counter.contract_address);
+    let caller_balance_after = strk_dispatcher.balance_of(OWNER());
+
+    // contract balance is 0 and assert caller received the STRK token
+    assert(contract_balance_after == 0, 'Contract balance not 0');
+    assert(
+        caller_balance_after == caller_balance_before + contract_balance_before,
+        'Caller balance not increased',
+    );
+
     stop_cheat_caller_address(counter.contract_address);
 
     spy
