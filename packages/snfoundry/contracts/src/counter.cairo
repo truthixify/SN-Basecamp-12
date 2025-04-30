@@ -120,18 +120,22 @@ pub mod Counter {
         }
 
         fn reset_counter(ref self: ContractState) {
-            // let caller = get_caller_address();
+            let caller = get_caller_address();
             let strk_contract_address: ContractAddress = FELT_STRK_CONTRACT.try_into().unwrap();
             let strk_dispatcher = IERC20Dispatcher { contract_address: strk_contract_address };
             let contract_balance = strk_dispatcher.balance_of(get_contract_address());
 
             if contract_balance > 0 {
+                let allowance = strk_dispatcher.allowance(caller, get_contract_address());
+
+                assert!(allowance >= contract_balance, "Allowance and balance do not match");
+
                 strk_dispatcher
-                    .transfer_from(get_caller_address(), get_contract_address(), contract_balance);
+                    .transfer_from(caller, get_contract_address(), contract_balance);
             }
 
             self.counter.write(0);
-            self.emit(Reset { account: get_caller_address() });
+            self.emit(Reset { account: caller });
         }
 
         fn get_win_number(self: @ContractState) -> u32 {
