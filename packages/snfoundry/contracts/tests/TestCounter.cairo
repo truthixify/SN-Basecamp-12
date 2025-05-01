@@ -5,10 +5,9 @@ use contracts::counter::{
 };
 use openzeppelin_access::ownable::interface::{IOwnableDispatcher, IOwnableDispatcherTrait};
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-use snforge_std::EventSpyAssertionsTrait;
 use snforge_std::{
-    ContractClassTrait, DeclareResultTrait, declare, spy_events, start_cheat_caller_address,
-    stop_cheat_caller_address,
+    ContractClassTrait, DeclareResultTrait, EventSpyAssertionsTrait, declare, spy_events,
+    start_cheat_caller_address, stop_cheat_caller_address,
 };
 use starknet::{ContractAddress};
 
