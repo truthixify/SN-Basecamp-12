@@ -10,6 +10,7 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { inc } from "nprogress";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
+import { ellipsify } from "~~/utils/ellipsify";
 
 const Home = () => {
   const { data: blockNumber } = useBlockNumber();
@@ -40,7 +41,6 @@ const Home = () => {
   const [events, setEvents] = useState<
     { account: string; name: string; hash: string; timestamp: number }[]
   >([]);
-  console.log("increaseEvents", increaseEvents);
 
   useEffect(() => {
     const eventsR = resetEvents.map((event) => ({
@@ -109,7 +109,7 @@ const Home = () => {
         {
           contractName: "Strk",
           functionName: "transfer",
-          args: [counter?.address, BigInt(Number(inputAmount) * 10 ** 18)],
+          args: [counter?.address, BigInt(Number(inputAmount) * 1e18)],
         },
         {
           contractName: "Counter",
@@ -137,8 +137,9 @@ const Home = () => {
   const handleIncrement = () => {
     if (inputAmount && parseFloat(inputAmount) > 0) {
       incrementWithStrkDeposit();
+    } else {
+      incrementCounter();
     }
-    incrementCounter();
   };
 
   const handleReset = () => {
@@ -217,7 +218,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="bg-base-100 p-8 rounded-3xl border border-gradient shadow-lg">
+          <div className="h-[400px] overflow-scroll bg-base-100 p-8 rounded-3xl border border-gradient shadow-lg">
             <h2 className="text-2xl font-bold mb-6 text-secondary">
               Activity History
             </h2>
@@ -226,10 +227,10 @@ const Home = () => {
                 events.map((event, index) => (
                   <div key={index} className="bg-base-200 p-4 rounded-xl">
                     <p className="text-lg">
-                      <span className="font-medium">
-                        {event.account.substring(0, 6)}...
-                        {event.account.slice(-4)} {event.name}
+                      <span className="font-medium mr-4">
+                        { ellipsify(event.account) }
                       </span>
+                      <span className="mr-4">{ event.name }</span>
                     </p>
                   </div>
                 ))

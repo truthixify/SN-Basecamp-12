@@ -7,15 +7,16 @@ edition = "2024_07"
 
 [dependencies]
 starknet = "2.9.4"
+# Change to just "openzeppelin" to use full features
 openzeppelin_access = "1.0.0"
 openzeppelin_token = "1.0.0"
 
 [dev-dependencies]
 openzeppelin_utils = "1.0.0"
-snforge_std = "0.38.2"
+snforge_std = "0.37.0"
 
 [[target.starknet-contract]]
-casm = true # taggle this to `false` to speed up compilation/testing
+casm = true
 
 [tool.fmt]
 sort-module-level-items = true
@@ -24,8 +25,3 @@ sort-module-level-items = true
 name = "SEPOLIA_LATEST"
 url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
 block_id.tag = "latest"
-
-[profile.dev.cairo]
-unstable-add-statements-code-locations-debug-info = true
-unstable-add-statements-functions-debug-info = true
-inlining-strategy = "avoid"

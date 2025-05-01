@@ -5,59 +5,59 @@ describe("utilsContract", () => {
   it("should parse integer form correctly", () => {
     expect(
       getArgsAsStringInputFromForm({ "echo_u8_input_core::integer::u8": "10" }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u16": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u32": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u64": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u128": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u256": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({ "echo_u8_input_core::felt252": "10" }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
 
     expect(
       getArgsAsStringInputFromForm({ "echo_u8_input_core::integer::i8": "10" }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::i16": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::i32": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::i64": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::i128": "10",
       }),
-    ).toEqual([10n]);
+    ).toEqual([10]);
   });
 
   it("should parse bool form correctly", () => {
@@ -101,8 +101,8 @@ describe("utilsContract", () => {
     const result = getArgsAsStringInputFromForm(form);
     expect(result).toEqual([
       {
-        "0": 1n,
-        "1": 2n,
+        "0": 1,
+        "1": 2,
       },
     ]);
   });
@@ -131,14 +131,14 @@ describe("utilsContract", () => {
     };
     const result = getArgsAsStringInputFromForm(form);
     expect(result).toEqual([
-      1n,
+      1,
       {
         variant: {
-          Echo: 32n,
+          Echo: 32,
         },
       },
-      3n,
-      4n,
+      3,
+      4,
     ]);
   });
 
@@ -178,12 +178,12 @@ describe("utilsContract", () => {
     expect(result).toEqual([
       {
         name: "john",
-        age: 24n,
+        age: 24,
         msg: {
           variant: {
             Move: {
-              "0": 1n,
-              "1": 2n,
+              "0": 1,
+              "1": 2,
             },
           },
         },

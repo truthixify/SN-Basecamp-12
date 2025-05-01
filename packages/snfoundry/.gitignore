@@ -1,5 +1,4 @@
 target
 .snfoundry_cache/
 .env
-**/coverage
-**/snfoundry_trace
+local-devnet
