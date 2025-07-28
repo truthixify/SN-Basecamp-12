@@ -7,7 +7,6 @@ import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffo
 import { useBlockNumber } from "@starknet-react/core";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
-import { inc } from "nprogress";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import { ellipsify } from "~~/utils/ellipsify";
@@ -228,9 +227,9 @@ const Home = () => {
                   <div key={index} className="bg-base-200 p-4 rounded-xl">
                     <p className="text-lg">
                       <span className="font-medium mr-4">
-                        { ellipsify(event.account) }
+                        {ellipsify(event.account)}
                       </span>
-                      <span className="mr-4">{ event.name }</span>
+                      <span className="mr-4">{event.name}</span>
                     </p>
                   </div>
                 ))
